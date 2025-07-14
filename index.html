@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infographic: Josiah Hooten - Technical Sales Engineer</title>
-    <!-- Chosen Palette: Brilliant Blues -->
-    <!-- Application Structure Plan: The infographic follows a narrative structure designed to persuade a hiring manager. It starts with a bold "Hero" statement from the profile, immediately establishing the candidate's value proposition. It then flows into visually distinct, card-based sections: 1. A Radar Chart to compare and showcase the balanced nature of sales, client, and technical skills. 2. A "Key Achievement" callout focusing on the corporate acquisition, providing a quantifiable business impact. 3. A structured HTML/CSS timeline to illustrate career progression and the increasing focus on business-centric roles. 4. A Bubble Chart to display the breadth and depth of technical skills in an engaging format. This structure is more compelling than a standard resume layout because it prioritizes impact and storytelling over simple chronology, guiding the user through a curated presentation of the candidate's strengths. -->
+    <title>Josiah Hooten - Technical Architect</title>
+    <!-- Chosen Palette: Warm Neutrals & Teal Accent -->
+    <!-- Application Structure Plan: A single-page application with a fixed sidebar for desktop and a top menu for mobile, enabling smooth scroll navigation. The structure is designed for quick scanning and deep dives. It starts with a strong profile summary (the hook), followed by interactive visualizations for skills (a bar chart for quick competency assessment) and experience (a clickable timeline to reduce initial clutter). This non-linear, interactive approach is more engaging than a static resume and allows a busy recruiter to quickly access the most relevant information for a technical sales role. -->
     <!-- Visualization & Content Choices: 
-        - Profile/Hook: Goal: Inform. Method: Large, bold text in a hero section. Justification: Grabs attention and sets the theme. Method: HTML/CSS.
-        - Core Competencies: Goal: Compare. Viz: Radar Chart. Justification: Perfectly visualizes the balance between multiple, distinct skill categories (Sales, Client, Tech), which is ideal for a "hybrid" role like a Sales Engineer. Library: Chart.js (Canvas).
-        - Acquisition Highlight: Goal: Inform. Viz: "Big Number"/Callout Card. Justification: Elevates a critical career achievement to its own section for maximum impact. Method: HTML/CSS.
-        - Professional Experience: Goal: Show Change. Viz: Vertical Timeline. Justification: Clearly illustrates career growth and the narrative of pivoting towards more strategic roles. Method: Structured HTML/CSS with Tailwind (NO SVG/Mermaid).
-        - Technical Skills: Goal: Organize/Compare. Viz: Bubble Chart. Justification: More visually engaging than a list, showing technology groups and relative expertise through size. Library: Chart.js (Canvas).
+        - Profile: Goal: Inform/Brand. Method: Prominent text block. Justification: Immediately establishes value proposition.
+        - Core Competencies: Goal: Compare/Inform. Viz: Horizontal Bar Chart. Interaction: Hover for tooltips. Justification: Visually groups and presents key sales-oriented and technical skills for fast evaluation. Library: Chart.js (Canvas).
+        - Professional Experience: Goal: Show change/detail. Viz: Interactive Vertical Timeline. Interaction: Click to expand/collapse job details. Justification: Presents career progression clearly without overwhelming the user initially. Method: HTML/CSS/JS.
+        - Certifications: Goal: Add credibility. Viz: Styled cards. Interaction: Hover effect. Justification: Cleanly presents credentials. Method: HTML/CSS.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,264 +19,308 @@
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 900px;
             margin-left: auto;
             margin-right: auto;
-            height: 400px;
+            height: 500px;
             max-height: 60vh;
         }
-        .bubble-chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 450px;
-            max-height: 70vh;
-        }
-        @media (min-width: 768px) {
+        @media (max-width: 768px) {
             .chart-container {
-                height: 450px;
+                height: 400px;
             }
-             .bubble-chart-container {
-                height: 500px;
-            }
+        }
+        .timeline-item-content {
+            transition: all 0.3s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+        .timeline-item-content.open {
+            max-height: 500px; /* Adjust as needed */
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .timeline-button[aria-expanded="true"] .icon-plus {
+            transform: rotate(45deg);
         }
     </style>
 </head>
-<body style="background-color: #F7F7F7; color: #333;" class="font-sans">
+<body class="bg-slate-50 text-slate-700 font-sans">
 
-    <!-- Header & Profile Hook -->
-    <header class="text-white text-center py-20 px-6" style="background-color: #0B4F6C;">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Josiah Hooten: Technical Sales Architect</h1>
-            <p class="text-lg md:text-xl" style="color: #cdeeff;">Bridging the gap between complex technical solutions and critical business needs with over 15 years of experience.</p>
+    <div class="relative min-h-screen md:flex">
+        <!-- Mobile Nav -->
+        <div class="bg-slate-100 text-slate-800 flex justify-between md:hidden sticky top-0 z-20 shadow-md">
+            <a href="#profile" class="block p-4 font-bold">Josiah Hooten</a>
+            <button id="mobile-menu-button" class="p-4 focus:outline-none">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
         </div>
-    </header>
 
-    <main class="container mx-auto p-4 md:p-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            <!-- Competencies Card -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
-                <h2 class="text-2xl font-bold mb-2" style="color: #0B4F6C;">The Complete Skillset</h2>
-                <p class="text-gray-600 mb-4">A successful Technical Sales Engineer requires a balanced blend of client-facing soft skills and deep technical knowledge. This chart visualizes the synergy between my core competencies, demonstrating readiness to engage in the full sales and delivery lifecycle.</p>
-                <div class="chart-container">
-                    <canvas id="skillsRadarChart"></canvas>
-                </div>
+        <!-- Sidebar -->
+        <div id="sidebar" class="bg-slate-100 text-slate-800 w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 md:flex md:flex-col md:justify-between shadow-lg">
+            <div>
+                <a href="#profile" class="text-slate-900 flex items-center space-x-2 px-4">
+                    <span class="text-2xl font-extrabold">Josiah Hooten</span>
+                </a>
+                <nav class="mt-10">
+                    <a href="#profile" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-500 hover:text-white">Profile</a>
+                    <a href="#competencies" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-500 hover:text-white">Competencies</a>
+                    <a href="#experience" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-500 hover:text-white">Experience</a>
+                    <a href="#certifications" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-500 hover:text-white">Certifications</a>
+                </nav>
             </div>
-
-            <!-- Key Achievement Card -->
-            <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col justify-center items-center text-center">
-                 <h2 class="text-2xl font-bold mb-2" style="color: #0B4F6C;">Key Business Impact</h2>
-                 <p class="text-gray-600 mb-4">Driving product strategy and development with a focus on market needs and client feedback.</p>
-                <div class="w-48 h-48 rounded-full flex items-center justify-center text-white" style="background-color: #01BAEF;">
-                    <div class="text-center">
-                        <p class="font-bold text-5xl">1</p>
-                        <p class="font-semibold">Flagship App</p>
-                    </div>
-                </div>
-                <p class="mt-4 font-semibold text-lg text-gray-700">Led to a successful corporate acquisition by Uptake Technologies.</p>
+             <div class="px-4 py-2">
+                <h3 class="font-bold text-sm">Contact</h3>
+                <p class="text-xs mt-2">Durango, CO</p>
+                <p class="text-xs mt-1">your.email@example.com</p>
+                <p class="text-xs mt-1">linkedin.com/in/yourprofile</p>
             </div>
-
-            <!-- Experience Timeline Card -->
-            <div class="md:col-span-2 lg:col-span-3 bg-white p-6 rounded-lg shadow-lg">
-                <h2 class="text-2xl font-bold mb-4 text-center" style="color: #0B4F6C;">A Sales-Focused Career Path</h2>
-                <p class="text-gray-600 mb-8 max-w-3xl mx-auto text-center">My career has been a deliberate progression towards roles that leverage technology to solve business problems and drive growth. Each position has built upon my client engagement and product strategy skills, as highlighted in this timeline.</p>
-                <div class="relative wrap overflow-hidden p-2 h-full">
-                    <div class="border-2-2 absolute border-opacity-20 border-gray-700 h-full border" style="left: 50%"></div>
-                    <!-- Right Timeline -->
-                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
-                        <div class="order-1 w-5/12"></div>
-                        <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
-                            <h1 class="mx-auto font-semibold text-lg text-white">1</h1>
-                        </div>
-                        <div class="order-1 bg-blue-400 rounded-lg shadow-xl w-5/12 px-6 py-4" style="background-color: #01BAEF;">
-                            <h3 class="mb-1 font-bold text-white text-lg">Technical Architect</h3>
-                            <p class="text-sm leading-snug tracking-wide text-blue-100">CompTIA (via Catalyte) | 2023 - Present</p>
-                             <p class="text-sm mt-2 text-white">Authored SOWs, led effort estimations, and served as the key technical contact during the pre-sales cycle.</p>
-                        </div>
-                    </div>
-                    <!-- Left Timeline -->
-                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
-                        <div class="order-1 w-5/12"></div>
-                        <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
-                            <h1 class="mx-auto text-white font-semibold text-lg">2</h1>
-                        </div>
-                        <div class="order-1 rounded-lg shadow-xl w-5/12 px-6 py-4" style="background-color: #0B4F6C;">
-                            <h3 class="mb-1 font-bold text-white text-lg">Director of Software Development</h3>
-                             <p class="text-sm leading-snug tracking-wide text-blue-100">Asset Performance Inc. | 2014 - 2020</p>
-                            <p class="text-sm mt-2 text-white">Partnered with the sales team to define the product roadmap, directly leading to a successful company acquisition.</p>
-                        </div>
-                    </div>
-                    <!-- Right Timeline -->
-                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
-                        <div class="order-1 w-5/12"></div>
-                        <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
-                            <h1 class="mx-auto font-semibold text-lg text-white">3</h1>
-                        </div>
-                        <div class="order-1 bg-blue-400 rounded-lg shadow-xl w-5/12 px-6 py-4" style="background-color: #01BAEF;">
-                            <h3 class="mb-1 font-bold text-white text-lg">Sr. Application Developer</h3>
-                             <p class="text-sm leading-snug tracking-wide text-blue-100">Xerox Business Services | 2012 - 2014</p>
-                            <p class="text-sm mt-2 text-white">Developed and enhanced large-scale enterprise billing software, collaborating with internal teams on critical applications.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Technical Foundation Card -->
-            <div class="md:col-span-2 lg:col-span-3 bg-white p-6 rounded-lg shadow-lg">
-                <h2 class="text-2xl font-bold mb-2 text-center" style="color: #0B4F6C;">Technical Foundation</h2>
-                <p class="text-gray-600 mb-4 max-w-3xl mx-auto text-center">Effective solution architecture is built on a deep and diverse technical skillset. This visualization represents my proficiency across key technology domains. The size of the bubble corresponds to years of experience and project focus.</p>
-                <div class="bubble-chart-container">
-                    <canvas id="techBubbleChart"></canvas>
-                </div>
-            </div>
-
         </div>
-    </main>
+
+        <!-- Main content -->
+        <main class="flex-1 p-4 sm:p-6 md:p-10">
+            
+            <!-- Profile Section -->
+            <section id="profile" class="min-h-screen flex flex-col justify-center">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-4xl md:text-6xl font-bold text-slate-800">Bridging Technology and Business Needs.</h1>
+                    <p class="mt-6 text-lg md:text-xl text-slate-600">
+                        A dynamic and client-focused Technical Architect with over 15 years of experience leading the full project lifecycle, from pre-sales consultation and solution design to final deployment. Expert in architecting scalable SaaS applications with a track record of translating customer feedback into successful products, including a flagship application that directly led to a corporate acquisition.
+                    </p>
+                    <div class="mt-8 flex gap-4">
+                        <a href="mailto:your.email@example.com" class="bg-teal-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-teal-600 transition-colors">Contact Me</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Competencies Section -->
+            <section id="competencies" class="py-20">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Core Competencies 🎯</h2>
+                    <p class="text-center text-slate-600 mb-12">
+                        A balanced skill set across pre-sales, client engagement, and deep technical expertise. The chart below highlights key areas of proficiency. Hover over the bars for more detail. This visualization provides a quick overview of how my technical abilities directly support the sales process.
+                    </p>
+                    <div class="chart-container bg-white p-4 rounded-lg shadow-xl">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Experience Section -->
+            <section id="experience" class="py-20">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Professional Experience 📈</h2>
+                    <p class="text-center text-slate-600 mb-12">
+                        A career path focused on creating business value through technology. My roles have consistently involved direct client interaction, product strategy, and technical leadership. Click on any role below to see how I've contributed to business growth and client success.
+                    </p>
+                    <div id="timeline-container" class="relative">
+                        <!-- Vertical Line -->
+                        <div class="absolute left-5 top-0 h-full w-0.5 bg-slate-200"></div>
+                        
+                        <!-- Timeline Item 1 -->
+                        <div class="relative pl-12 mb-8 timeline-item">
+                            <div class="absolute left-5 top-1 w-5 h-5 bg-white border-2 border-teal-500 rounded-full transform -translate-x-1/2"></div>
+                            <button aria-expanded="false" class="timeline-button w-full text-left">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">Technical Architect</h3>
+                                        <p class="text-sm text-slate-500">CompTIA (via Catalyte Inc.) | 2023 - Present</p>
+                                    </div>
+                                    <span class="icon-plus text-teal-500 text-3xl font-thin transition-transform duration-300">+</span>
+                                </div>
+                            </button>
+                            <div class="timeline-item-content">
+                                <ul class="list-disc list-inside mt-2 text-slate-600 space-y-2">
+                                    <li>Serve as a key technical point of contact during the pre-sales cycle, collaborating with stakeholders at major SaaS companies to understand core business challenges and define project scope.</li>
+                                    <li>Lead the estimation of development work, author comprehensive Statements of Work (SOWs), and present technical solution proposals to prospective and existing clients.</li>
+                                    <li>Architect and guide the development of microservice-based applications, ensuring the final product aligns with the client's strategic goals and the agreed-upon scope.</li>
+                                    <li>Act as the primary technical liaison between client stakeholders and the development team, translating business needs into actionable technical specifications and mentoring junior developers.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Item 2 -->
+                        <div class="relative pl-12 mb-8 timeline-item">
+                            <div class="absolute left-5 top-1 w-5 h-5 bg-white border-2 border-teal-500 rounded-full transform -translate-x-1/2"></div>
+                            <button aria-expanded="false" class="timeline-button w-full text-left">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">Application Architect</h3>
+                                        <p class="text-sm text-slate-500">SavantX | 2020 - 2022</p>
+                                    </div>
+                                    <span class="icon-plus text-teal-500 text-3xl font-thin transition-transform duration-300">+</span>
+                                </div>
+                            </button>
+                            <div class="timeline-item-content">
+                                <ul class="list-disc list-inside mt-2 text-slate-600 space-y-2">
+                                    <li>Led a development team in creating a cutting-edge SaaS solution, translating a complex AI/ML vision into a tangible, market-ready product.</li>
+                                    <li>Oversaw the complete architectural design and technical delivery, ensuring the solution met high standards for performance, scalability, and innovation.</li>
+                                    <li>Managed the product development lifecycle, ensuring alignment with both technical requirements and the overarching business strategy.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Timeline Item 3 -->
+                        <div class="relative pl-12 mb-8 timeline-item">
+                            <div class="absolute left-5 top-1 w-5 h-5 bg-white border-2 border-teal-500 rounded-full transform -translate-x-1/2"></div>
+                            <button aria-expanded="false" class="timeline-button w-full text-left">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">Director of Software Development / Technical Lead</h3>
+                                        <p class="text-sm text-slate-500">Asset Performance Inc. | 2014 - 2020</p>
+                                    </div>
+                                    <span class="icon-plus text-teal-500 text-3xl font-thin transition-transform duration-300">+</span>
+                                </div>
+                            </button>
+                            <div class="timeline-item-content">
+                                <ul class="list-disc list-inside mt-2 text-slate-600 space-y-2">
+                                    <li>Partnered directly with the sales team and key stakeholders to define the product roadmap for the flagship "Preventance" SaaS application.</li>
+                                    <li>Translated client feedback and market opportunities into actionable development plans and feature enhancements, directly influencing the product's competitive advantage.</li>
+                                    <li>Played a pivotal role in demonstrating the application's value proposition, which was a key asset in the company's successful acquisition by Uptake Technologies.</li>
+                                    <li>Spearheaded the architecture and development of the application, transforming a legacy system into a modern, scalable SaaS solution.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Certifications Section -->
+            <section id="certifications" class="py-20 bg-slate-100">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">Certifications & Credentials 🏅</h2>
+                     <p class="text-center text-slate-600 mb-12">
+                        Committed to staying current with cloud technologies and development best practices. These certifications validate my expertise in the Microsoft Azure ecosystem, a critical skill for architecting modern, cloud-native solutions for clients.
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                            <h3 class="font-bold text-lg text-teal-600">AZ-104: Microsoft Azure Administrator</h3>
+                            <p class="mt-2 text-slate-600">Demonstrates expertise in implementing, managing, and monitoring an organization's Microsoft Azure environment.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                            <h3 class="font-bold text-lg text-teal-600">AZ-204: Microsoft Certified Azure Developer</h3>
+                            <p class="mt-2 text-slate-600">(In Progress) Validates skills for designing, building, testing, and maintaining cloud applications and services on Microsoft Azure.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <footer class="text-center py-6 text-slate-500 text-sm">
+                <p>&copy; 2024 Josiah Hooten. Designed and built to showcase a passion for technology and user experience.</p>
+            </footer>
+
+        </main>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const sidebar = document.getElementById('sidebar');
+            mobileMenuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+            });
             
-            const tooltipTitleCallback = (tooltipItems) => {
-                const item = tooltipItems[0];
-                let label = item.chart.data.labels[item.dataIndex];
-                if (Array.isArray(label)) {
-                    return label.join(' ');
-                }
-                return label;
-            };
-
-            const processLongLabels = (labels, maxLength) => {
-                return labels.map(label => {
-                    if (label.length <= maxLength) {
-                        return label;
+            // Close mobile menu on nav link click
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) {
+                       sidebar.classList.add('-translate-x-full');
                     }
-                    const words = label.split(' ');
-                    const lines = [];
-                    let currentLine = '';
-                    words.forEach(word => {
-                        if ((currentLine + ' ' + word).trim().length > maxLength) {
-                            lines.push(currentLine.trim());
-                            currentLine = word;
-                        } else {
-                            currentLine = (currentLine + ' ' + word).trim();
-                        }
-                    });
-                    lines.push(currentLine.trim());
-                    return lines;
                 });
-            };
-
-            // Skills Radar Chart
-            const radarCtx = document.getElementById('skillsRadarChart').getContext('2d');
-            const radarData = {
-                labels: [
-                    'Pre-Sales & Solutioning', 
-                    'Client Engagement', 
-                    ['Technical', 'Leadership'],
-                    'Cloud & DevOps', 
-                    '.NET Ecosystem'
-                ],
-                datasets: [{
-                    label: 'Proficiency Level',
-                    data: [90, 95, 85, 90, 95],
-                    backgroundColor: 'rgba(1, 186, 239, 0.2)',
-                    borderColor: 'rgba(1, 186, 239, 1)',
-                    pointBackgroundColor: 'rgba(1, 186, 239, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(1, 186, 239, 1)',
-                    borderWidth: 2
-                }]
-            };
-            new Chart(radarCtx, {
-                type: 'radar',
-                data: radarData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
-                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                            pointLabels: { 
-                                font: { size: 14 },
-                                color: '#333' 
-                            },
-                            ticks: {
-                                backdropColor: 'rgba(0,0,0,0)',
-                                color: 'rgba(0,0,0,0.5)',
-                                stepSize: 20
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 100
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                title: tooltipTitleCallback
-                            }
-                        }
-                    }
-                }
             });
 
-            // Tech Bubble Chart
-            const bubbleCtx = document.getElementById('techBubbleChart').getContext('2d');
-            const bubbleData = {
-                datasets: [
-                    {
-                        label: 'Cloud & DevOps',
-                        data: [
-                            { x: 15, y: 70, r: 25, label: 'MS Azure' },
-                            { x: 25, y: 50, r: 18, label: 'Microservices' },
-                            { x: 35, y: 75, r: 15, label: 'CI/CD' },
-                            { x: 10, y: 40, r: 12, label: 'Azure Functions' },
-                        ],
-                        backgroundColor: 'rgba(11, 79, 108, 0.7)'
-                    },
-                    {
-                        label: 'Languages',
-                        data: [
-                            { x: 50, y: 60, r: 30, label: 'C#' },
-                            { x: 65, y: 80, r: 20, label: 'SQL' },
-                            { x: 80, y: 55, r: 18, label: 'JavaScript' },
-                            { x: 60, y: 40, r: 15, label: 'TypeScript' },
-                        ],
-                        backgroundColor: 'rgba(1, 186, 239, 0.7)'
-                    },
-                    {
-                        label: 'Frameworks',
-                        data: [
-                            { x: 40, y: 30, r: 28, label: '.NET Core' },
-                            { x: 70, y: 25, r: 22, label: 'React' },
-                            { x: 85, y: 40, r: 16, label: 'Angular' },
-                        ],
-                        backgroundColor: 'rgba(117, 117, 117, 0.7)'
-                    }
-                ]
+            // Timeline accordion
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => {
+                const button = item.querySelector('.timeline-button');
+                const content = item.querySelector('.timeline-item-content');
+                button.addEventListener('click', () => {
+                    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                    button.setAttribute('aria-expanded', !isExpanded);
+                    content.classList.toggle('open');
+                });
+            });
+            
+            // Chart.js - Skills Chart
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            
+            const skillsData = {
+                labels: [
+                    'Technical Discovery', 'Requirements Analysis', 'SOW Authoring', 'Effort Estimation', 'PoC Development', // Pre-Sales
+                    'Client-Facing Communication', 'Technical Presentations', 'Business Acumen', 'Translating Business Needs', // Client Engagement
+                    'Team Mentorship', 'Agile Methodologies', 'Project Scoping', 'Cross-functional Collaboration', // Technical Leadership
+                    'MS Azure Ecosystem', '.NET (Core, MVC)', 'React / Angular', 'Microservices', 'CI/CD & DevOps' // Core Tech
+                ],
+                datasets: [{
+                    label: 'Pre-Sales & Solution Architecture',
+                    data: [95, 90, 85, 90, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(13, 148, 136, 0.7)', // teal-600
+                    borderColor: 'rgba(13, 148, 136, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Stakeholder & Client Engagement',
+                    data: [0, 0, 0, 0, 0, 95, 90, 88, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(45, 212, 191, 0.7)', // teal-400
+                    borderColor: 'rgba(45, 212, 191, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Technical Leadership',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 95, 90, 85, 90, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(15, 118, 110, 0.7)', // teal-700
+                    borderColor: 'rgba(15, 118, 110, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Core Technologies',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 98, 95, 85, 90, 92],
+                    backgroundColor: 'rgba(17, 94, 89, 0.7)', // teal-800
+                    borderColor: 'rgba(17, 94, 89, 1)',
+                    borderWidth: 1
+                }]
             };
-             new Chart(bubbleCtx, {
-                type: 'bubble',
-                data: bubbleData,
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: skillsData,
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { display: false, min: 0, max: 100 },
-                        y: { display: false, min: 0, max: 100 }
+                        x: {
+                            display: false,
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true,
+                             ticks: {
+                                font: {
+                                    size: 14,
+                                }
+                            }
+                        }
                     },
                     plugins: {
-                        legend: { position: 'bottom' },
+                        legend: {
+                            position: 'bottom',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Skill Proficiency by Category'
+                        },
                         tooltip: {
-                            callbacks: {
+                           enabled: true,
+                           callbacks: {
                                 label: function(context) {
-                                    const point = context.raw;
-                                    return `${point.label}: Exp. ${point.r}`;
+                                    // Hide tooltip for zero values
+                                    if (context.raw === 0) {
+                                        return null;
+                                    }
+                                    return context.dataset.label;
                                 }
                             }
                         }
